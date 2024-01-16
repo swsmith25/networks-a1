@@ -11,6 +11,10 @@
 #define BUFFER_SIZE 1000
 #define MAX_CLIENT 10
 
+/* get_time function */
+/* Input: None */
+/* Output: current time in seconds */
+/* (double data type and ns precision) */
 double
 get_time(void) {
     struct timespec now;
@@ -21,12 +25,29 @@ get_time(void) {
 void
 handle_server(int port) {
     /* TODO: Implement server mode operation here */
+    /* 1. Create a TCP/IP socket with `socket` system call */
+    /* 2. `bind` socket to the given port number */
+    /* 3. `listen` for TCP connections */
+    /* 4. Wait for the client connection with `accept` system call */
+    /* 5. After the connection is established, received data in chunks of 1000 bytes */
+    /* 6. When the connection is closed, the program should print out the elapsed time, */
+    /*    the total number of bytes received (in kilobytes), and the rate */ 
+    /*    at which the program received data (in Mbps) */
+
     return;
 }
 
 void
 handle_client(const char *addr, int port, int duration) {
     /* TODO: Implement client mode operation here */
+    /* 1. Create a TCP/IP socket with socket system call */
+    /* 2. `connect` to the server specified by arguments (`addr`, `port`) */
+    /* 3. Send data to the connected server in chunks of 1000bytes */
+    /* 4. Close the connection after `duration` seconds */
+    /* 5. When the connection is closed, the program should print out the elapsed time, */
+    /*    the total number of bytes sent (in kilobytes), and the rate */ 
+    /*    at which the program sent data (in Mbps) */
+
     return;
 }
 
@@ -72,6 +93,8 @@ main(int argc, char *argv[]) {
         }
 
         /* TODO: Implement argument check here */
+        /* 1. Check server_tcp_port is within the port number range */
+        /* 2. Check the duration is a positive number */
 
         printf("Client mode: Server IP = %s, Port = %d, Time Window = %d\n", server_host_ipaddr, server_tcp_port, duration);
         handle_client (server_host_ipaddr, server_tcp_port, duration);
@@ -84,6 +107,7 @@ main(int argc, char *argv[]) {
         }
 
         /* TODO: Implement argument check here */
+        /* Check server_tcp_port is within the port number range */
         
         printf("Server mode, Port = %d\n", server_tcp_port);
         handle_server(server_tcp_port);
