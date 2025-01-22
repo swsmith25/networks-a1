@@ -102,7 +102,7 @@ main(int argc, char *argv[]) {
     } else if (mode == 2) {
         // Server mode logic goes here
         if (server_tcp_port == 0) {
-            fprintf(stderr, "Client mode requires -p option.\n");
+            fprintf(stderr, "Server mode requires -p option.\n");
             exit(EXIT_FAILURE);
         }
 
