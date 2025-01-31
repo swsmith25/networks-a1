@@ -110,9 +110,19 @@ int main(int argc, char *argv[])
             exit(EXIT_FAILURE);
         }
 
-        /* TODO: Implement argument check here */
+        /* Argument checking */
         /* 1. Check server_tcp_port is within the port number range */
         /* 2. Check the duration is a positive number */
+        if (server_tcp_port < 1 || server_tcp_port > 65535)
+        {
+            fprintf(stderr, "Server TCP port number is out of range.\n");
+            exit(EXIT_FAILURE);
+        }
+        if (duration <= 0)
+        {
+            fprintf(stderr, "Please enter a positive duration value.\n");
+            exit(EXIT_FAILURE);
+        }
 
         printf("Client mode: Server IP = %s, Port = %d, Time Window = %d\n", server_host_ipaddr, server_tcp_port, duration);
         handle_client(server_host_ipaddr, server_tcp_port, duration);
@@ -126,8 +136,13 @@ int main(int argc, char *argv[])
             exit(EXIT_FAILURE);
         }
 
-        /* TODO: Implement argument check here */
+        /* Argument checking */
         /* Check server_tcp_port is within the port number range */
+        if (server_tcp_port < 1 || server_tcp_port > 65535)
+        {
+            fprintf(stderr, "Server TCP port number is out of range.\n");
+            exit(EXIT_FAILURE);
+        }
 
         printf("Server mode, Port = %d\n", server_tcp_port);
         handle_server(server_tcp_port);
