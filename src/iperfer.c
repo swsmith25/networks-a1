@@ -120,11 +120,40 @@ void handle_server(int port)
 
 void handle_client(const char *addr, int port, int duration)
 {
+    struct sockaddr_in serv_addr;
+    char *message = "Hello from client";
+    char buffer[1024] = {0};
+    
     /* TODO: Implement client mode operation here */
     /* 1. Create a TCP/IP socket with socket system call */
+    int sock = socket(AF_INET, SOCK_STREAM, 0);
+    if (sock < 0)
+    {
+        fprintf(stderr, "Error creating socket.\n");
+        exit(EXIT_FAILURE);
+    }
     /* 2. `connect` to the server specified by arguments (`addr`, `port`) */
+    serv_addr.sin_family = AF_INET;
+    serv_addr.sin_port = htons(port);
+
+    // Convert IPv4 and IPv6 addresses from text to binary form
+    if (inet_pton(AF_INET, "127.0.0.1", &serv_addr.sin_addr) <= 0) {
+        fprintf(stderr, "Invalid address/Address not supported.\n");
+        exit(EXIT_FAILURE);
+    }
+
+    if (connect(sock, (struct sockaddr *)&serv_addr, sizeof(serv_addr)) < 0) {
+        fprintf(stderr, "Connection failed.\n");
+        exit(EXIT_FAILURE);
+    }
     /* 3. Send data to the connected server in chunks of 1000bytes */
+    send(sock, message, strlen(message), 0);
+    printf("Message sent\n");
+    read(sock, buffer, 1024);
+    printf("Server: %s\n", buffer);
+
     /* 4. Close the connection after `duration` seconds */
+    close(sock);
     /* 5. When the connection is closed, the program should print out the elapsed time, */
     /*    the total number of bytes sent (in kilobytes), and the rate */
     /*    at which the program sent data (in Mbps) */
