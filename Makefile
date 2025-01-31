@@ -11,5 +11,15 @@ iperfer:
 	$(CC) $(src_dir)/iperfer.c -o $(bin_dir)/iperfer
 	cp -f $(bin_dir)/iperfer $(lab1_shared_dir)
 	cp -f $(bin_dir)/iperfer $(lab2_shared_dir)
+
+compile:
+	$(CC) $(src_dir)/iperfer.c -o $(bin_dir)/iperfer
+
 clean:
 	rm -f $(bin_dir)/iperfer $(lab1_shared_dir)/iperfer $(lab2_shared_dir)/iperfer
+
+commit:
+	git add .
+	@read -p "commit message: " msg; \
+	git commit -m "$$msg"
+	git status
