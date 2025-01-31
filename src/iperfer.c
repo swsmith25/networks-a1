@@ -41,34 +41,37 @@ double get_time(void)
 void *communicate(void *arg) {
     int client_socket = *(int *)arg;
     char buffer[BUFFER_SIZE];
+    double start_time = get_time();
+    long kilobytes_received = 0;
 
     free(arg);
 
-    // Communicate with the client
     /* 5. After the connection is established, receive data in chunks of 1000 bytes */
     while (1) {
         memset(buffer, 0, BUFFER_SIZE);
         int read_size = read(client_socket, buffer, BUFFER_SIZE);
+        // TODO: kilobytes_received++;
         if (read_size <= 0) {
             printf("Client disconnected\n");
             break;
         }
-        printf("Received: %s\n", buffer);
-        send(client_socket, "Hello from server", strlen("Hello from server"), 0);
     }
 
-    // TODO:
+    close(client_socket);
+
     /* 6. When the connection is closed, the program should print out the elapsed time, */
     /*    the total number of bytes received (in kilobytes), and the rate */
     /*    at which the program received data (in Mbps) */
+    double total_time = get_time() - start_time;
+    printf("Elapsed time: %f\n", total_time);
+    printf("Bytes received: %li kilobytes\n", kilobytes_received);
+    printf("Throughput: %f Mbps\n", (kilobytes_received * 1000 / 125000) / total_time);
 
-    close(client_socket);
     return NULL;
 }
 
 void handle_server(int port)
 {
-    /* TODO: Implement server mode operation here */
     struct sockaddr_in server_addr;
     int addr_size = sizeof(server_addr);
 
@@ -79,6 +82,7 @@ void handle_server(int port)
         fprintf(stderr, "Error creating socket.\n");
         exit(EXIT_FAILURE);
     }
+    
     /* 2. `bind` socket to the given port number */
     server_addr.sin_family = AF_INET;
     server_addr.sin_addr.s_addr = INADDR_ANY;
@@ -88,12 +92,14 @@ void handle_server(int port)
         fprintf(stderr, "Error binding socket.\n");
         exit(EXIT_FAILURE);
     }
+
     /* 3. `listen` for TCP connections */
     if (listen(sockfd, MAX_CLIENT) != 0)
     {
         fprintf(stderr, "Error listening for connections.\n");
         exit(EXIT_FAILURE);
     }
+
     /* 4. Wait for the client connection with `accept` system call */
     printf("Server listening on port %d\n", port);
 
@@ -122,9 +128,9 @@ void handle_client(const char *addr, int port, int duration)
 {
     struct sockaddr_in serv_addr;
     char *message = "Hello from client";
-    char buffer[1024] = {0};
+    char buffer[BUFFER_SIZE];
+    memset(buffer, 0, BUFFER_SIZE);
     
-    /* TODO: Implement client mode operation here */
     /* 1. Create a TCP/IP socket with socket system call */
     int sock = socket(AF_INET, SOCK_STREAM, 0);
     if (sock < 0)
@@ -132,6 +138,7 @@ void handle_client(const char *addr, int port, int duration)
         fprintf(stderr, "Error creating socket.\n");
         exit(EXIT_FAILURE);
     }
+
     /* 2. `connect` to the server specified by arguments (`addr`, `port`) */
     serv_addr.sin_family = AF_INET;
     serv_addr.sin_port = htons(port);
@@ -146,17 +153,26 @@ void handle_client(const char *addr, int port, int duration)
         fprintf(stderr, "Connection failed.\n");
         exit(EXIT_FAILURE);
     }
+
     /* 3. Send data to the connected server in chunks of 1000bytes */
-    send(sock, message, strlen(message), 0);
-    printf("Message sent\n");
-    read(sock, buffer, 1024);
-    printf("Server: %s\n", buffer);
+    double start_time = get_time();
+    long kilobytes_sent = 0;
+    while (get_time() - start_time < duration)
+    {
+        send(sock, buffer, strlen(buffer), 0);
+        kilobytes_sent++;
+    }
 
     /* 4. Close the connection after `duration` seconds */
     close(sock);
+
     /* 5. When the connection is closed, the program should print out the elapsed time, */
     /*    the total number of bytes sent (in kilobytes), and the rate */
     /*    at which the program sent data (in Mbps) */
+    double total_time = get_time() - start_time;
+    printf("Elapsed time: %f\n", total_time);
+    printf("Bytes sent: %li kilobytes\n", kilobytes_sent);
+    printf("Throughput: %f Mbps\n", (kilobytes_sent * 1000 / 125000) / total_time);
 
     return;
 }
