@@ -19,6 +19,9 @@
 #include <time.h>
 #include <unistd.h>
 
+// unsure what this works for
+#include <pthread.h>
+
 
 #define PORT_MAX (1 << 16) - 1 // 65535
 #define BUFFER_SIZE 1000
@@ -35,17 +38,82 @@ double get_time(void)
     return now.tv_sec + (now.tv_nsec * 1e-9);
 }
 
-void handle_server(int port)
-{
-    /* TODO: Implement server mode operation here */
-    /* 1. Create a TCP/IP socket with `socket` system call */
-    /* 2. `bind` socket to the given port number */
-    /* 3. `listen` for TCP connections */
-    /* 4. Wait for the client connection with `accept` system call */
-    /* 5. After the connection is established, received data in chunks of 1000 bytes */
+void *communicate(void *arg) {
+    int client_socket = *(int *)arg;
+    char buffer[BUFFER_SIZE];
+
+    free(arg);
+
+    // Communicate with the client
+    /* 5. After the connection is established, receive data in chunks of 1000 bytes */
+    while (1) {
+        memset(buffer, 0, BUFFER_SIZE);
+        int read_size = read(client_socket, buffer, BUFFER_SIZE);
+        if (read_size <= 0) {
+            printf("Client disconnected\n");
+            break;
+        }
+        printf("Received: %s\n", buffer);
+        send(client_socket, "Hello from server", strlen("Hello from server"), 0);
+    }
+
+    // TODO:
     /* 6. When the connection is closed, the program should print out the elapsed time, */
     /*    the total number of bytes received (in kilobytes), and the rate */
     /*    at which the program received data (in Mbps) */
+
+    close(client_socket);
+    return NULL;
+}
+
+void handle_server(int port)
+{
+    /* TODO: Implement server mode operation here */
+    struct sockaddr_in server_addr;
+    int addr_size = sizeof(server_addr);
+
+    /* 1. Create a TCP/IP socket with `socket` system call */
+    int sockfd = socket(AF_INET, SOCK_STREAM, 0);
+    if (sockfd < 0)
+    {
+        fprintf(stderr, "Error creating socket.\n");
+        exit(EXIT_FAILURE);
+    }
+    /* 2. `bind` socket to the given port number */
+    server_addr.sin_family = AF_INET;
+    server_addr.sin_addr.s_addr = INADDR_ANY;
+    server_addr.sin_port = htons(port);
+    if (bind(sockfd, (struct sockaddr *)&server_addr, addr_size) != 0)
+    {
+        fprintf(stderr, "Error binding socket.\n");
+        exit(EXIT_FAILURE);
+    }
+    /* 3. `listen` for TCP connections */
+    if (listen(sockfd, MAX_CLIENT) != 0)
+    {
+        fprintf(stderr, "Error listening for connections.\n");
+        exit(EXIT_FAILURE);
+    }
+    /* 4. Wait for the client connection with `accept` system call */
+    printf("Server listening on port %d\n", port);
+
+    while (1)
+    {
+        int *client_socket = malloc(sizeof(int));
+        if ((*client_socket = accept(sockfd, (struct sockaddr *)&server_addr, (socklen_t *)&addr_size)) < 0) {
+            fprintf(stderr, "Error accepting connection.\n");
+            free(client_socket);
+            continue;
+        }
+        printf("New client connected.\n");
+        
+        pthread_t thread_id;
+        if (pthread_create(&thread_id, NULL, communicate, client_socket) != 0) {
+            fprintf(stderr, "Error creating thread.\n");
+            free(client_socket);
+        }
+        pthread_detach(thread_id);
+    }
 
     return;
 }
@@ -112,12 +180,12 @@ int main(int argc, char *argv[])
 
         /* Argument checking */
         /* 1. Check server_tcp_port is within the port number range */
-        /* 2. Check the duration is a positive number */
-        if (server_tcp_port < 1 || server_tcp_port > 65535)
+        if (server_tcp_port < 1 || server_tcp_port > PORT_MAX)
         {
             fprintf(stderr, "Server TCP port number is out of range.\n");
             exit(EXIT_FAILURE);
         }
+        /* 2. Check the duration is a positive number */
         if (duration <= 0)
         {
             fprintf(stderr, "Please enter a positive duration value.\n");
@@ -138,7 +206,7 @@ int main(int argc, char *argv[])
 
         /* Argument checking */
         /* Check server_tcp_port is within the port number range */
-        if (server_tcp_port < 1 || server_tcp_port > 65535)
+        if (server_tcp_port < 1 || server_tcp_port > PORT_MAX)
         {
             fprintf(stderr, "Server TCP port number is out of range.\n");
             exit(EXIT_FAILURE);
