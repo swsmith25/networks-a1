@@ -1,18 +1,24 @@
 // windows
-_WIN32_WINNT = 0x601
+#ifdef _WIN32
+#define _WIN32_WINNT 0x601
 #include <winsock2.h>
 #include <ws2tcpip.h>
 #include <windows.h>
 #include <ws2spi.h>
-// original
+#else
+//linux
+#include <sys/socket.h>
+#include <netinet/in.h>
+#include <arpa/inet.h>
+#endif
+
+// works for any OS
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <time.h>
 #include <unistd.h>
-// #include <sys/socket.h>
-// #include <netinet/in.h>
-// #include <arpa/inet.h>
+
 
 #define PORT_MAX (1 << 16) - 1 // 65535
 #define BUFFER_SIZE 1000
