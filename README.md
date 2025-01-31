@@ -2,7 +2,7 @@
 Socket assignment for Networks class
 ## Group 17
 ### Bo Smith | swsmith25 | ss97732
-### Harry | ------------ | ---------
+### Harry    | harrymay  | hsm759
 
 # Report
 
