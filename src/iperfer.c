@@ -27,10 +27,13 @@
 #define BUFFER_SIZE 1000
 #define MAX_CLIENT 10
 
-/* get_time function */
-/* Input: None */
-/* Output: current time in seconds */
-/* (double data type and ns precision) */
+
+/**
+ * @brief Get the time funtion
+ * 
+ * @return double current time in seconds
+ * (double data type and ns precision)
+ */
 double get_time(void)
 {
     struct timespec now;
@@ -38,6 +41,13 @@ double get_time(void)
     return now.tv_sec + (now.tv_nsec * 1e-9);
 }
 
+
+/**
+ * @brief ?
+ * 
+ * @param arg 
+ * @return void* 
+ */
 void *communicate(void *arg) {
     int client_socket = *(int *)arg;
     char buffer[BUFFER_SIZE];
@@ -55,6 +65,8 @@ void *communicate(void *arg) {
             printf("Client disconnected\n");
             break;
         }
+
+        kilobytes_received ++; //track recieved
     }
 
     close(client_socket);
@@ -65,11 +77,17 @@ void *communicate(void *arg) {
     double total_time = get_time() - start_time;
     printf("Elapsed time: %f\n", total_time);
     printf("Bytes received: %li kilobytes\n", kilobytes_received);
-    printf("Throughput: %f Mbps\n", (kilobytes_received * 1000 / 125000) / total_time);
+    printf("Throughput: %f Mbps\n", (kilobytes_received * 1000 / 125000) / total_time); 
 
     return NULL;
 }
 
+
+/**
+ * @brief server communication
+ * 
+ * @param port 
+ */
 void handle_server(int port)
 {
     struct sockaddr_in server_addr;
@@ -124,10 +142,20 @@ void handle_server(int port)
     return;
 }
 
+
+/**
+ * @brief client mode messages
+ * 
+ * @param addr 
+ * @param port 
+ * @param duration 
+ */
 void handle_client(const char *addr, int port, int duration)
 {
+    
     struct sockaddr_in serv_addr;
     char *message = "Hello from client";
+    
     char buffer[BUFFER_SIZE];
     memset(buffer, 0, BUFFER_SIZE);
     
@@ -177,6 +205,16 @@ void handle_client(const char *addr, int port, int duration)
     return;
 }
 
+
+
+
+/**
+ * @brief main runna funciton
+ * 
+ * @param argc 
+ * @param argv 
+ * @return int 
+ */
 int main(int argc, char *argv[])
 {
     /* argument parsing */
