@@ -139,7 +139,7 @@ void handle_server(int port)
         pthread_detach(thread_id);
     }
 
-    return;
+    close(sockfd);
 }
 
 
@@ -172,7 +172,7 @@ void handle_client(const char *addr, int port, int duration)
     serv_addr.sin_port = htons(port);
 
     // Convert IPv4 and IPv6 addresses from text to binary form
-    if (inet_pton(AF_INET, "127.0.0.1", &serv_addr.sin_addr) <= 0) {
+    if (inet_pton(AF_INET, addr, &serv_addr.sin_addr) <= 0) {
         fprintf(stderr, "Invalid address/Address not supported.\n");
         exit(EXIT_FAILURE);
     }
@@ -187,7 +187,12 @@ void handle_client(const char *addr, int port, int duration)
     long kilobytes_sent = 0;
     while (get_time() - start_time < duration)
     {
-        send(sock, buffer, strlen(buffer), 0);
+        int bytes_sent = send(sock, buffer, BUFFER_SIZE, 0);
+        if (bytes_sent < 0)
+        {
+            fprintf(stderr, "Error sending data.\n");
+            break;
+        }
         kilobytes_sent++;
     }
 
@@ -200,9 +205,8 @@ void handle_client(const char *addr, int port, int duration)
     double total_time = get_time() - start_time;
     printf("Elapsed time: %f\n", total_time);
     printf("Bytes sent: %li kilobytes\n", kilobytes_sent);
-    printf("Throughput: %f Mbps\n", (kilobytes_sent * 1000 / 125000) / total_time);
-
-    return;
+    printf("Throughput: %f Mbps\n", (kilobytes_sent * 8.0) / total_time * 1000.0);
+    //MBps = (kilobytes_sent * 8.0) / total_time * 1000.0;
 }
 
 
