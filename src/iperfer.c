@@ -78,7 +78,7 @@ void *communicate(void *arg) {
     double total_time = get_time() - start_time;
     printf("Elapsed time: %f\n", total_time);
     printf("Kbytes received: %li kilobytes\n", bytes_received/1000);
-    printf("Throughput: %f Mbps\n", ((bytes_received * 8.0) / (total_time * 1000000))); 
+    printf("Throughput: %f Mbps\n", ((bytes_received * 8.0) / (total_time * 10000000))); 
 
     return NULL;
 }
@@ -207,7 +207,7 @@ void handle_client(const char *addr, int port, int duration)
     double total_time = get_time() - start_time;
     printf("Elapsed time: %f\n", total_time);
     printf("Kbytes sent: %li kilobytes\n", bytes_sent/1000);
-    printf("Throughput: %f Mbps\n", ((bytes_sent * 8.0) / (total_time * 1000000)));
+    printf("Throughput: %f Mbps\n", ((bytes_sent * 8.0) / (total_time * 10000000)));
     //MBps = (kilobytes_sent * 8.0) / total_time * 1000.0;
 }
 
