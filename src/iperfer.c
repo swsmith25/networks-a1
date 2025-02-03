@@ -52,7 +52,7 @@ void *communicate(void *arg) {
     int client_socket = *(int *)arg;
     char buffer[BUFFER_SIZE];
     double start_time = get_time();
-    long kilobytes_received = 0;
+    long bytes_received = 0;
 
     free(arg);
     arg=NULL;
@@ -67,7 +67,7 @@ void *communicate(void *arg) {
             break;
         }
 
-        kilobytes_received ++; //track recieved
+        bytes_received += read_size; //track recieved
     }
 
     close(client_socket);
@@ -77,8 +77,8 @@ void *communicate(void *arg) {
     /*    at which the program received data (in Mbps) */
     double total_time = get_time() - start_time;
     printf("Elapsed time: %f\n", total_time);
-    printf("Kbytes received: %li kilobytes\n", kilobytes_received);
-    printf("Throughput: %f Mbps\n", (kilobytes_received / (total_time * 125))); 
+    printf("Kbytes received: %li kilobytes\n", bytes_received * 1000);
+    printf("Throughput: %f Mbps\n", ((bytes_received * 8.0) / (total_time * 1000000))); 
 
     return NULL;
 }
@@ -185,16 +185,16 @@ void handle_client(const char *addr, int port, int duration)
 
     /* 3. Send data to the connected server in chunks of 1000bytes */
     double start_time = get_time();
-    long kilobytes_sent = 0;
+    long bytes_sent = 0;
     while (get_time() - start_time < duration)
     {
-        int bytes_sent = send(sock, buffer, BUFFER_SIZE, 0);
-        if (bytes_sent < 0)
+        int curr_bytes_sent = send(sock, buffer, BUFFER_SIZE, 0);
+        if (curr_bytes_sent < 0)
         {
             fprintf(stderr, "Error sending data.\n");
             break;
         }
-        kilobytes_sent ++;
+        bytes_sent += curr_bytes_sent; //i.e plus 1000
     }
 
     /* 4. Close the connection after `duration` seconds */
@@ -205,8 +205,8 @@ void handle_client(const char *addr, int port, int duration)
     /*    at which the program sent data (in Mbps) */
     double total_time = get_time() - start_time;
     printf("Elapsed time: %f\n", total_time);
-    printf("Kbytes sent: %li kilobytes\n", kilobytes_sent/1000);
-    printf("Throughput: %f Mbps\n", (kilobytes_sent / (total_time * 125)));
+    printf("Kbytes sent: %li kilobytes\n", bytes_sent*1000);
+    printf("Throughput: %f Mbps\n", ((bytes_sent * 8.0) / (total_time * 1000000)));
     //MBps = (kilobytes_sent * 8.0) / total_time * 1000.0;
 }
 
