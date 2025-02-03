@@ -61,7 +61,7 @@ void *communicate(void *arg) {
     while (1) {
         memset(buffer, 0, BUFFER_SIZE);
         int read_size = read(client_socket, buffer, BUFFER_SIZE);
-        // TODO: kilobytes_received++;
+        
         if (read_size <= 0) {
             printf("Client disconnected\n");
             break;
@@ -77,7 +77,7 @@ void *communicate(void *arg) {
     /*    at which the program received data (in Mbps) */
     double total_time = get_time() - start_time;
     printf("Elapsed time: %f\n", total_time);
-    printf("Kbytes received: %li kilobytes\n", bytes_received * 1000);
+    printf("Kbytes received: %li kilobytes\n", bytes_received/1000);
     printf("Throughput: %f Mbps\n", ((bytes_received * 8.0) / (total_time * 1000000))); 
 
     return NULL;
@@ -194,6 +194,7 @@ void handle_client(const char *addr, int port, int duration)
             fprintf(stderr, "Error sending data.\n");
             break;
         }
+        fprintf("bytes sent", bytes_sent);
         bytes_sent += curr_bytes_sent; //i.e plus 1000
     }
 
@@ -205,7 +206,7 @@ void handle_client(const char *addr, int port, int duration)
     /*    at which the program sent data (in Mbps) */
     double total_time = get_time() - start_time;
     printf("Elapsed time: %f\n", total_time);
-    printf("Kbytes sent: %li kilobytes\n", bytes_sent*1000);
+    printf("Kbytes sent: %li kilobytes\n", bytes_sent/1000);
     printf("Throughput: %f Mbps\n", ((bytes_sent * 8.0) / (total_time * 1000000)));
     //MBps = (kilobytes_sent * 8.0) / total_time * 1000.0;
 }
