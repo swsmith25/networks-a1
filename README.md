@@ -9,7 +9,7 @@ Socket assignment for Networks class
 ## Part 1
 - iperfer client results when running it for 10 seconds in the given two_hosts_direct topology  
 As seen in the image Throuput measure 144.3Mbps on the server and 144.4 on the client. There no information lost as both the sent and recieve data measurements wer equal. So there might be a relatively negligible discrepancy in the timing meansurements.
-![Part1 Output](.\pt1_throughput_screenshot.png)
+![Part1 Output](./pt1_throughput_screenshot.png)
 ## Part 2
 ### Q1: Basic measurements
 - Measure and report average RTT and throughput between two adjacent routers, r1 and r2.  
@@ -67,4 +67,4 @@ The latency increased significantly while measuring bandwidth between h2 and h5.
 
 - What’s the trend between the measured throughput and latency?  
     As the link delay increased, the latency increased and the throughput decreased.
-![P2-Q5 Output](.\q5_1sdelay_output.png)
+![P2-Q5 Output](./q5_1sdelay_output.png)
