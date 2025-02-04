@@ -195,7 +195,7 @@ void handle_client(const char *addr, int port, int duration)
             fprintf(stderr, "Error sending data.\n");
             break;
         }
-        fprintf(stdout, "bytes sent: %ld\n", bytes_sent);
+        //fprintf(stdout, "bytes sent: %ld\n", bytes_sent);
         bytes_sent += curr_bytes_sent; //i.e plus 1000
     }
 
