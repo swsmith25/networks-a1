@@ -13,11 +13,11 @@ As seen in the image Throuput measure 144.3Mbps on the server and 144.4 on the c
 ## Part 2
 ### Q1: Basic measurements
 - Measure and report average RTT and throughput between two adjacent routers, r1 and r2.  
-AVG RTT:    
+    - AVG RTT:    
 675 ms / 10 packets = **67.5 ms**  
   
-AVG Thrpughput:  
-(640B * 8)/9.176s = **558Mbps**  
+    - AVG Throughput:  
+(640B * 8) / 9.176s = **558Mbps**  
   
 - Measure and report average RTT and throughput between two hosts, h1 and h4.  
     - AVG RTT:  
@@ -31,7 +31,8 @@ AVG Thrpughput:
 **82.414ms**  
 
 - How does it compare to the measured latency in Q1 (RTT between h1 and h4)?     
-The latency increased significantly while measuring bandwidth between h2 and h5. This behavior makes sense as the ping communication must share the inter-router link with the iperfer communication.
+    
+    The latency increased significantly while measuring bandwidth between h2 and h5. This behavior makes sense as the ping communication must share the inter-router link with the iperfer communication.
 
 ### Q3: Impact of multiplexing on throughput
 - Report the throughput between a pair of hosts varying the number of host pairs that conduct measurements.
@@ -45,7 +46,7 @@ The latency increased significantly while measuring bandwidth between h2 and h5.
 - How do the three measurements varying the number of concurrent host pairs compare to the measured throughput in Q1 (between h1 and h4)? What’s the trend between measured throughput and the number of host pairs?  
   
     The more host-pairs are communicating on the network, the lower the throughput becomes. Having one host-pair (h1, h4) resulted in the highest throughput. It didn't have to share the information highway with other pairs.  
-    It is a similare result as in Q2.
+    It is a similar result as in Q2.
       
 ### Q4: Impact of link capacity on end-to-end throughput and latency.
 - Measure and report path latency (average RTT) and throughput between two hosts, h1 and h4. How does it change compared to Q1?    
@@ -66,5 +67,6 @@ The latency increased significantly while measuring bandwidth between h2 and h5.
 
 
 - What’s the trend between the measured throughput and latency?  
+
     As the link delay increased, the latency increased and the throughput decreased.
 ![P2-Q5 Output](./q5_1sdelay_output.png)
